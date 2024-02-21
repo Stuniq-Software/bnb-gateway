@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from controller import (AuthServiceController, 
                         StayServiceController, 
@@ -6,6 +6,7 @@ from controller import (AuthServiceController,
                         PaymentServiceController, 
                         InvoiceServiceController, 
                         RatingServiceController)
+from util import health_check
 
 
 app = FastAPI(
@@ -29,6 +30,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+@app.get("/")
+async def perform_health_check(response: Response):
+    return health_check()
+
+@app.get("/healthz")
+async def perform_healthz_check(response: Response):
+    return health_check()
 
 app.include_router(AuthServiceController)
 app.include_router(StayServiceController)
